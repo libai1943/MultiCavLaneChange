@@ -1,0 +1,5 @@
+tol	1e-5
+bound_push	0.0001
+mu_strategy	adaptive
+linear_solver ma27
+print_level 5
