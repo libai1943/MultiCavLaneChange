@@ -1,5 +1,7 @@
 # Cooperative Lane Changes for Connected and Automated Vehicles
 
+[Download ZIP](https://github.com/libai1943/MultiCavLaneChange/archive/refs/heads/main.zip) · [Getting started](#requirements-and-quick-start) · [Guide](#function-map) · [Citation](#citation)
+
 **Plan the lane changes, arrange the formation, and stitch the two motion stages.** This MATLAB research implementation accompanies:
 
 > Bai Li, Youmin Zhang, Yiheng Feng, Yue Zhang, Yuming Ge, and Zhijiang Shao, “Balancing Computation Speed and Quality: A Decentralized Motion Planning Method for Cooperative Lane Changes of Connected and Automated Vehicles,” *IEEE Transactions on Intelligent Vehicles*, 3(3), 340–350, 2018. [Paper / DOI](https://doi.org/10.1109/TIV.2018.2843159).
@@ -44,6 +46,22 @@ setenv('PATH', ['C:\path\to\ampl', pathsep, getenv('PATH')]);
 The script leaves `coop_traj_final` in the workspace and calls the protected `dsa.p` renderer. `tf1` and `tf2` are stage durations; `gross_time = tf1 + tf2` is the **maneuver duration**, not CPU time. Solver and graphics runtimes depend on the generated task and local installation.
 
 The distribution is designed around its Windows executables and P-code; a native Linux/macOS workflow is not supplied here.
+
+## Inspect one vehicle's change in formation
+
+After `RunMe`, compare the starting longitudinal position of the same vehicle before and after conflict resolution. `ProduceDelayList.m` restores the original vehicle order when it returns, so index `k` refers to the same car in both structures.
+
+```matlab
+k = 1;
+shift_m = coop_traj2(k).x(1) - coop_traj(k).x(1)
+stage_seconds = [tf1, tf2]
+plot(coop_traj(k).x, coop_traj(k).y, '--', coop_traj2(k).x, coop_traj2(k).y, '-')
+axis equal
+xlabel('Longitudinal position (m)'), ylabel('Lateral position (m)')
+legend('Stage 2 before spacing','Stage 2 after spacing')
+```
+
+A negative shift means that this car's lane-change trajectory was moved upstream. The spacing loop also shifts the still-unprocessed vehicles starting in its lane. Stage 1 uses the resulting relative positions as its terminal formation. [Spacing loop](ProduceDelayList.m) · [Formation export](WriteRelativeFormationInfoForStage1.m)
 
 ## Configuration
 
